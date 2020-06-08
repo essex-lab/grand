@@ -27,9 +27,9 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 # Defining this class to allow combination of objects with Mock objects
 class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-        return Mock()
+#    @classmethod
+#    def __getattr__(cls, name):
+#        return Mock()
 
     def __mul__(self, other):
         return Mock()
