@@ -27,10 +27,6 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 # Defining this class to allow combination of objects with Mock objects
 class Mock(MagicMock):
-#    @classmethod
-#    def __getattr__(cls, name):
-#        return Mock()
-
     def __mul__(self, other):
         return Mock()
 
@@ -63,11 +59,10 @@ extensions = ['sphinx.ext.autodoc',
 autodoc_default_flags = ['members']
 autodoc_mock_imports = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'simtk']
 autosummary_generate = True
-MOCK_MODULES = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'scipy.cluster', 'simtk', 'simtk.openmm', 'simtk.openmm.app', 'simtk.unit']
+MOCK_MODULES = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'scipy.cluster',
+                'simtk', 'simtk.openmm', 'simtk.openmm.app', 'simtk.unit']
 for module_name in MOCK_MODULES:
-    #sys.modules[module_name] = unittest.mock.Mock()
     sys.modules[module_name] = Mock()
-    #sys.modules.update(module_name, Mock())
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -189,6 +184,4 @@ texinfo_documents = [
      author, 'grand', 'GCMC sampling of water in OpenMM',
      'Miscellaneous'),
 ]
-
-
 
