@@ -22,20 +22,23 @@ import sys
 sys.path.insert(0, os.path.abspath('../..'))
 
 
+# Defining this class to allow combination of objects with Mock objects
 class Mock(MagicMock):
-@classmethod
-def getattr(cls, name):
-return Mock()
-def mul(self, other):
-return Mock()
-def rmul(self, other):
-return Mock()
-def pow(self, other):
-return Mock()
-def div(self, other):
-return Mock()
+    @classmethod
+    def getattr(cls, name):
+        return Mock()
 
+    def mul(self, other):
+        return Mock()
 
+    def rmul(self, other):
+        return Mock()
+
+    def pow(self, other):
+        return Mock()
+
+    def div(self, other):
+        return Mock()
 
 # -- General configuration ------------------------------------------------
 
