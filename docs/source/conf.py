@@ -66,8 +66,8 @@ autosummary_generate = True
 MOCK_MODULES = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'scipy.cluster', 'simtk', 'simtk.openmm', 'simtk.openmm.app', 'simtk.unit']
 for module_name in MOCK_MODULES:
     #sys.modules[module_name] = unittest.mock.Mock()
-    #sys.modules[module_name] = Mock()
-    sys.modules.update(module_name, Mock())
+    sys.modules[module_name] = Mock()
+    #sys.modules.update(module_name, Mock())
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
