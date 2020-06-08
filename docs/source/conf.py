@@ -69,7 +69,7 @@ autodoc_mock_imports = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', '
 autosummary_generate = True
 MOCK_MODULES = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'simtk']
 for module_name in MOCK_MODULES:
-    sys.modules[module_name] = Mock()
+    sys.modules[module_name] = unittest.mock.Mock()
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
