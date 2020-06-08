@@ -26,22 +26,22 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 
 # Defining this class to allow combination of objects with Mock objects
-class MockX(unittest.mock.Mock):
+class Mock(MagicMock):
     @classmethod
     def __getattr__(cls, name):
-        return MockX()
+        return Mock()
 
     def __mul__(self, other):
-        return MockX()
+        return Mock()
 
     def __rmul__(self, other):
-        return MockX()
+        return Mock()
 
     def __pow__(self, other):
-        return MockX()
+        return Mock()
 
     def __div__(self, other):
-        return MockX()
+        return Mock()
 
 # -- General configuration ------------------------------------------------
 
@@ -66,7 +66,8 @@ autosummary_generate = True
 MOCK_MODULES = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'scipy.cluster', 'simtk', 'simtk.openmm', 'simtk.openmm.app', 'simtk.unit']
 for module_name in MOCK_MODULES:
     #sys.modules[module_name] = unittest.mock.Mock()
-    sys.modules[module_name] = MockX()
+    #sys.modules[module_name] = Mock()
+    sys.modules.update(module_name, Mock())
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
