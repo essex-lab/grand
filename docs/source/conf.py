@@ -28,19 +28,19 @@ sys.path.insert(0, os.path.abspath('../..'))
 # Defining this class to allow combination of objects with Mock objects
 class Mock(MagicMock):
     @classmethod
-    def getattr(cls, name):
+    def __getattr__(cls, name):
         return Mock()
 
-    def mul(self, other):
+    def __mul__(self, other):
         return Mock()
 
-    def rmul(self, other):
+    def __rmul__(self, other):
         return Mock()
 
-    def pow(self, other):
+    def __pow__(self, other):
         return Mock()
 
-    def div(self, other):
+    def __div__(self, other):
         return Mock()
 
 # -- General configuration ------------------------------------------------
@@ -55,7 +55,6 @@ class Mock(MagicMock):
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
               'sphinx.ext.autosectionlabel',
-              'numpydoc',
               'sphinx.ext.graphviz',
               'sphinx.ext.napoleon',
               'sphinx.ext.mathjax']
