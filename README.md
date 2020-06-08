@@ -1,3 +1,5 @@
+[![Documentation Status](https://readthedocs.org/projects/grand/badge/?version=latest)](https://grand.readthedocs.io/en/latest/?badge=latest)
+
 # _grand_ : Grand Canonical Water Sampling in OpenMM
 
 Version : 1.0.0
@@ -30,7 +32,8 @@ pip install lxml
 
 Several (very short) examples of how this module is ran alongside OpenMM can be found in
 the `examples/` directory.
-Additional [examples](https://github.com/essex-lab/grand-paper) are also available.
+Additional [examples](https://github.com/essex-lab/grand-paper) and 
+[documentation](https://grand.readthedocs.io/en/latest/) are also available.
 
 The _grand_ module is released under the MIT licence. If results from this
 module contribute to a publication, we only ask that you cite the
