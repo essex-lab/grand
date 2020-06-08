@@ -38,6 +38,11 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.napoleon',
               'sphinx.ext.mathjax']
 
+# Adding these lines to try to fix the fact that docstrings aren't being loaded by readthedocs
+autodoc_default_flags = ['members']
+autodoc_mock_imports = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'simtk']
+autosummary_generate = True
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -154,7 +159,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'grand', 'grand Documentation',
-     author, 'grand', 'One line description of project.',
+     author, 'grand', 'GCMC sampling of water in OpenMM',
      'Miscellaneous'),
 ]
 
