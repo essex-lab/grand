@@ -62,6 +62,7 @@ extensions = ['sphinx.ext.autodoc',
 autodoc_default_flags = ['members']
 autodoc_mock_imports = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'simtk']
 autosummary_generate = True
+MOCK_MODULES = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'simtk']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
