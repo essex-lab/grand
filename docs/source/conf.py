@@ -40,7 +40,7 @@ extensions = ['sphinx.ext.autodoc',
 
 # Adding these lines to try to fix the fact that docstrings aren't being loaded by readthedocs
 autodoc_default_flags = ['members']
-autodoc_mock_imports = ['grand', 'logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'simtk']
+autodoc_mock_imports = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'simtk']
 autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.
@@ -93,7 +93,8 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
+#html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
