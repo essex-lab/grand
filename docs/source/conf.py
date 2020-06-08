@@ -67,7 +67,7 @@ extensions = ['sphinx.ext.autodoc',
 autodoc_default_flags = ['members']
 autodoc_mock_imports = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'simtk']
 autosummary_generate = True
-MOCK_MODULES = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'simtk', 'simtk.openmm']
+MOCK_MODULES = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'scipy.cluster', 'simtk', 'simtk.openmm']
 for module_name in MOCK_MODULES:
     sys.modules[module_name] = unittest.mock.Mock()
 
