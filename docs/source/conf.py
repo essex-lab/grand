@@ -31,15 +31,19 @@ class Mock(MagicMock):
     def __getattr__(cls, name):
         return Mock()
 
+    @classmethod
     def __mul__(self, other):
         return Mock()
 
+    @classmethod
     def __rmul__(self, other):
         return Mock()
 
+    @classmethod
     def __pow__(self, other):
         return Mock()
 
+    @classmethod
     def __div__(self, other):
         return Mock()
 
