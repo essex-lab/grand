@@ -40,7 +40,7 @@ extensions = ['sphinx.ext.autodoc',
 
 # Adding these lines to try to fix the fact that docstrings aren't being loaded by readthedocs
 autodoc_default_flags = ['members']
-autodoc_mock_imports = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'simtk']
+autodoc_mock_imports = ['grand', 'logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'simtk']
 autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.
