@@ -26,26 +26,26 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 
 # Defining this class to allow combination of objects with Mock objects
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-        return Mock()
-
-    @classmethod
-    def __mul__(self, other):
-        return Mock()
-
-    @classmethod
-    def __rmul__(self, other):
-        return Mock()
-
-    @classmethod
-    def __pow__(self, other):
-        return Mock()
-
-    @classmethod
-    def __div__(self, other):
-        return Mock()
+#class Mock(MagicMock):
+#    @classmethod
+#    def __getattr__(cls, name):
+#        return Mock()
+#
+#    @classmethod
+#    def __mul__(self, other):
+#        return Mock()
+#
+#    @classmethod
+#    def __rmul__(self, other):
+#        return Mock()
+#
+#    @classmethod
+#    def __pow__(self, other):
+#        return Mock()
+#
+#    @classmethod
+#    def __div__(self, other):
+#        return Mock()
 
 # -- General configuration ------------------------------------------------
 
@@ -67,7 +67,7 @@ extensions = ['sphinx.ext.autodoc',
 autodoc_default_flags = ['members']
 autodoc_mock_imports = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'simtk']
 autosummary_generate = True
-MOCK_MODULES = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'simtk']
+MOCK_MODULES = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'simtk', 'simtk.openmm']
 for module_name in MOCK_MODULES:
     sys.modules[module_name] = unittest.mock.Mock()
 
