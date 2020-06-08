@@ -55,6 +55,7 @@ class Mock(MagicMock):
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
               'sphinx.ext.autosectionlabel',
+              'numpydoc',
               'sphinx.ext.graphviz',
               'sphinx.ext.napoleon',
               'sphinx.ext.mathjax']
