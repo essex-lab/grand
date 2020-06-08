@@ -1,0 +1,12 @@
+*pyc
+build
+dist
+grand.egg-info
+grand/tests/output/*
+.cache
+.coverage
+.eggs
+.idea
+.DS_Store
+docs/Makefile
+docs/make.bat
