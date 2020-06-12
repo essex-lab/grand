@@ -1,0 +1,9 @@
+version: 2
+
+# Location of the conf.py
+sphinx:
+  configuration: docs/source/conf.py
+
+# Conda environment
+conda:
+  environment: docs/source/environment.yml

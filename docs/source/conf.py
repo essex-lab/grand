@@ -26,18 +26,18 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 
 # Defining this class to allow combination of objects with Mock objects
-class Mock(MagicMock):
-    def __mul__(self, other):
-        return Mock()
-
-    def __rmul__(self, other):
-        return Mock()
-
-    def __pow__(self, other):
-        return Mock()
-
-    def __div__(self, other):
-        return Mock()
+#class Mock(MagicMock):
+#    def __mul__(self, other):
+#        return Mock()
+#
+#    def __rmul__(self, other):
+#        return Mock()
+#
+#    def __pow__(self, other):
+#        return Mock()
+#
+#    def __div__(self, other):
+#        return Mock()
 
 # -- General configuration ------------------------------------------------
 
@@ -57,12 +57,12 @@ extensions = ['sphinx.ext.autodoc',
 
 # Adding these lines to try to fix the fact that docstrings aren't being loaded by readthedocs
 autodoc_default_flags = ['members']
-autodoc_mock_imports = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'simtk']
+#autodoc_mock_imports = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'simtk']
 autosummary_generate = True
-MOCK_MODULES = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'scipy.cluster',
-                'simtk', 'simtk.openmm', 'simtk.openmm.app', 'simtk.unit']
-for module_name in MOCK_MODULES:
-    sys.modules[module_name] = Mock()
+#MOCK_MODULES = ['logging', 'mdtraj', 'numpy', 'openmmtools', 'parmed', 'pymbar', 'scipy', 'scipy.cluster',
+#                'simtk', 'simtk.openmm', 'simtk.openmm.app', 'simtk.unit']
+#for module_name in MOCK_MODULES:
+#    sys.modules[module_name] = Mock()
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

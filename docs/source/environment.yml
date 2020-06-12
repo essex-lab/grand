@@ -1,0 +1,12 @@
+name: grand
+channels:
+  - omnia
+  - anaconda
+dependencies:
+  - python=3.6
+  - openmm=7.3.1
+  - mdtraj
+  - parmed
+  - openmmtools
+  - pymbar
+  - lxml
