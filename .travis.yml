@@ -15,10 +15,11 @@ install:
   - conda create -q -n grand-test python=$TRAVIS_PYTHON_VERSION
   - conda activate grand-test
   # Install dependencies
-  - conda install --yes -c omnia openmm=7.3.1 mdtraj parmed openmmtools pymbar
+  - conda install -c omnia openmm=7.3.1 mdtraj parmed openmmtools pymbar
   - pip install lxml
   # Install grand
   - python setup.py install
 
+# Run tests using setup.py test, which uses pytest
 script: python setup.py test
 
