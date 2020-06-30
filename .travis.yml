@@ -1,9 +1,22 @@
 
 language: python
+
 python:
   - "3.6"
+
 install:
-  - conda install -c omnia openmm=7.3.1 mdtraj parmed openmmtools pymbar
+  # Download Miniconda3
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - source "$HOME/miniconda/etc/profile.d/conda.sh"
+  # Create conda environment for testing
+  - conda create -q -n grand-test python=$TRAVIS_PYTHON_VERSION
+  - conda activate grand-test
+  # Install dependencies
+  - conda install --yes -c omnia openmm=7.3.1 mdtraj parmed openmmtools pymbar
   - pip install lxml
+  # Install grand
+  - python setup.py install
+
 script: python setup.py test
 
