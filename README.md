@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/essex-lab/grand.svg?branch=master)](https://travis-ci.org/essex-lab/grand)
 [![Documentation Status](https://readthedocs.org/projects/grand/badge/?version=latest)](https://grand.readthedocs.io/en/latest/?badge=latest)
 
 # _grand_ : Grand Canonical Water Sampling in OpenMM
@@ -43,6 +44,7 @@ publications below.
 
 - Marley Samways `<mls2g13@soton.ac.uk>`
 - Hannah Bruce Macdonald `<hannah.brucemacdonald@choderalab.org>`
+- Ollie Melling `<ojm2g16@soton.ac.uk>`
 
 ### Contact
 
