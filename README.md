@@ -26,6 +26,12 @@ command:
 python setup.py install
 ```
 
+The unit tests can then be carried out by running the following command from
+this directory:
+```commandline
+python setup.py test
+```
+
 The dependencies of this module can be installed as:
 
 ```commandline
