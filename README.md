@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.org/essex-lab/grand.svg?branch=master)](https://travis-ci.org/essex-lab/grand)
+[![Anaconda-Server Badge](https://anaconda.org/essexlab/grand/badges/version.svg)](https://anaconda.org/essexlab/grand)
+[![Anaconda-Server Badge](https://anaconda.org/essexlab/grand/badges/downloads.svg)](https://anaconda.org/essexlab/grand)
 [![Documentation Status](https://readthedocs.org/projects/grand/badge/?version=latest)](https://grand.readthedocs.io/en/latest/?badge=latest)
 
 # _grand_ : Grand Canonical Water Sampling in OpenMM
@@ -29,6 +31,11 @@ The dependencies of this module can be installed as:
 ```commandline
 conda install -c omnia openmm mdtraj parmed openmmtools pymbar
 pip install lxml
+```
+
+Alternatively, _grand_ and its dependencies can be installed via conda:
+```commandline
+conda install -c omnia -c anaconda -c conda-forge -c essexlab grand
 ```
 
 Several (very short) examples of how this module is ran alongside OpenMM can be found in

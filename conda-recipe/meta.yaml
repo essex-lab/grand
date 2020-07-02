@@ -1,0 +1,31 @@
+package:
+  name: grand
+  version: 1.0.0
+
+source:
+  path: ..
+
+build:
+  number: 0
+  noarch: python
+  script:
+    - mkdir -p $PREFIX/site-packages
+    - cp -r $RECIPE_DIR/../grand $PREFIX/site-packages/grand
+
+requirements:
+  build:
+    - python>=3.5
+    - pytest
+  run:
+    - openmmtools>=0.15.0
+    - lxml
+
+test:
+  requires:
+    - pytest
+
+about:
+  home: https://github.com/essex-lab/grand
+  summary: A Python module for carrying out GCMC insertions and deletions of water molecules in OpenMM.
+  license: MIT
+
