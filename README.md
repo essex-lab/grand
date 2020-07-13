@@ -35,9 +35,11 @@ python setup.py test
 The dependencies of this module can be installed as:
 
 ```commandline
-conda install -c omnia openmm mdtraj parmed openmmtools pymbar
+conda install -c conda-forge -c omnia openmmtools
 pip install lxml
 ```
+Many of grand's dependencies (openmm, mdtraj, pymbar, parmed) are also dependencies of 
+openmmtools, and will be installed alongside openmmtools.
 
 Alternatively, _grand_ and its dependencies can be installed via conda:
 ```commandline
