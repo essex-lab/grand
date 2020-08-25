@@ -53,7 +53,12 @@ Additional [examples](https://github.com/essex-lab/grand-paper) and
 
 The _grand_ module is released under the MIT licence. If results from this
 module contribute to a publication, we only ask that you cite the
-publications below.
+following publication.
+
+- M. L. Samways, H. E. Bruce Macdonald, J. W. Essex, _J. Chem. Inf. Model._,
+(Just accepted), DOI: https://doi.org/10.1021/acs.jcim.0c00648
+
+Additional references describing the theory of GCMC are provided below.
 
 ### Contributors
 
@@ -68,8 +73,8 @@ one of the contributors, or send an email to `<jessexgroup@gmail.com>`.
 
 ### References
 
-1. G. A. Ross, M. S. Bodnarchuk, J. W. Essex, _J. Am. Chem. Soc._ 2015, 
+1. G. A. Ross, M. S. Bodnarchuk, J. W. Essex, _J. Am. Chem. Soc._, 2015, 
 137, 47, 14930-14943, DOI: https://doi.org/10.1021/jacs.5b07940
 2. G. A. Ross, H. E. Bruce Macdonald, C. Cave-Ayland, A. I. Cabedo
-Martinez, J. W. Essex, _J. Chem. Theory Comput._ 2017, 13, 12, 6373-6381, DOI:
+Martinez, J. W. Essex, _J. Chem. Theory Comput._, 2017, 13, 12, 6373-6381, DOI:
 https://doi.org/10.1021/acs.jctc.7b00738
