@@ -56,7 +56,7 @@ module contribute to a publication, we only ask that you cite the
 following publication.
 
 - M. L. Samways, H. E. Bruce Macdonald, J. W. Essex, _J. Chem. Inf. Model._,
-(Just accepted), DOI: https://doi.org/10.1021/acs.jcim.0c00648
+2020, 60, 4436-4441, DOI: https://doi.org/10.1021/acs.jcim.0c00648
 
 Additional references describing the theory of GCMC are provided below.
 
