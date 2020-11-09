@@ -162,7 +162,11 @@ def calc_mu_ex(system, topology, positions, box_vectors, temperature, n_lambdas,
 
     # Calculate free energy differences
     mbar = pymbar.MBAR(U, N_k)
-    [deltaG_ij, ddeltaG_ij, theta_ij] = mbar.getFreeEnergyDifferences()
+    results = mbar.getFreeEnergyDifferences()
+    deltaG_ij = results[0]
+    ddeltaG_ij = results[1]
+
+    # Extract overall free energy change
     dG = -deltaG_ij[0, -1]
 
     # Write out intermediate free energies
