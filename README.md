@@ -5,7 +5,7 @@
 
 # _grand_ : Grand Canonical Water Sampling in OpenMM
 
-Version : 1.0.0
+Latest version : 1.0.1
 
 ### Background
 
