@@ -713,13 +713,13 @@ def recentre_traj(topology=None, trajectory=None, t=None, name='CA', resname='AL
         # Recentre all protein chains
         for chain in t.topology.chains:
             # Skip if this is a non-protein chain
-            if not all([atom.index in protein_ids for atom in residue.atoms]):
+            if not all([atom.index in protein_ids for atom in chain.atoms]):
                 continue
 
             # Find the closest distance between this chain and the reference
             min_dists = 1e8 * np.ones(3)
             for atom in chain.atoms:
-                # Distance between this atom and referene
+                # Distance between this atom and reference
                 v = t.xyz[f, atom.index, :] - t.xyz[f, ref_idx, :]
                 for i in range(3):
                     if abs(v[i]) < min_dists[i]:
@@ -747,7 +747,7 @@ def recentre_traj(topology=None, trajectory=None, t=None, name='CA', resname='AL
             # Find the closest distance between this residue and the reference
             min_dists = 1e8 * np.ones(3)
             for atom in residue.atoms:
-                # Distance between this atom and referene
+                # Distance between this atom and reference
                 v = t.xyz[f, atom.index, :] - t.xyz[f, ref_idx, :]
                 for i in range(3):
                     if abs(v[i]) < min_dists[i]:
