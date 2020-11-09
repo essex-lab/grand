@@ -30,15 +30,23 @@ The dependencies of this module can be installed as:
     conda install -c omnia openmm mdtraj parmed openmmtools pymbar
     pip install lxml
 
+Alternatively, grand can be installed directly, using conda:
+
+.. code:: bash
+
+    conda install -c omnia -c anaconda -c conda-forge -c essexlab grand
+
 The grand module is released under the MIT licence. If results from this
 module contribute to a publication, we only ask that you cite the
-publications below.
+publications below - particularly reference 3, in which the grand module
+was first presented).
 
 Contributors
 ------------
 
 - Marley Samways `<mls2g13@soton.ac.uk>`
 - Hannah Bruce Macdonald `<hannah.brucemacdonald@choderalab.org>`
+- Ollie Melling `<ojm2g16@soton.ac.uk>`
 
 Contact
 -------
@@ -55,3 +63,6 @@ References
 2. G. A. Ross, H. E. Bruce Macdonald, C. Cave-Ayland, A. I. Cabedo
 Martinez, J. W. Essex, J. Chem. Theory Comput. 2017, 13, 12, 6373-6381, DOI:
 https://doi.org/10.1021/acs.jctc.7b00738
+
+3. M. L. Samways, H. E. Bruce Macdonald, J. W. Essex, _J. Chem. Inf. Model._,
+2020, 60, 4436-4441, DOI: https://doi.org/10.1021/acs.jcim.0c00648
