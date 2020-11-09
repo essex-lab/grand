@@ -210,11 +210,14 @@ class BaseGrandCanonicalMonteCarloSampler(object):
         for atom_idx in range(self.nonbonded_force.getNumParticles()):
             # Get atom parameters
             [charge, sigma, epsilon] = self.nonbonded_force.getParticleParameters(atom_idx)
+
             # Make sure that sigma is not equal to zero
             if np.isclose(sigma._value, 0.0):
                 sigma = 1.0 * unit.angstrom
+
             # Add particle to the custom force (with lambda=1 for now)
             custom_sterics.addParticle([sigma, epsilon, 1.0])
+
             # Disable steric interactions in the original force by setting epsilon=0 (keep the charges for PME purposes)
             self.nonbonded_force.setParticleParameters(atom_idx, charge, sigma, abs(0))
 
@@ -223,11 +226,13 @@ class BaseGrandCanonicalMonteCarloSampler(object):
         # If exceptions (other than ignored interactions) are found involving water atoms, we have a problem
         for exception_idx in range(self.nonbonded_force.getNumExceptions()):
             [i, j, chargeprod, sigma, epsilon] = self.nonbonded_force.getExceptionParameters(exception_idx)
+
             # If epsilon is greater than zero, this is a non-zero exception, which must be checked
             if epsilon > 0.0 * unit.kilojoule_per_mole:
                 if i in water_atom_ids or j in water_atom_ids:
                     raise Exception("Non-zero exception interaction found involving water atoms ({} & {}). grand is"
                                     " not currently able to support this".format(i, j))
+
             custom_sterics.addExclusion(i, j)
 
         # Add the custom force to the system
@@ -681,6 +686,16 @@ class GCMCSphereSampler(BaseGrandCanonicalMonteCarloSampler):
         state = self.context.getState(getPositions=True, enforcePeriodicBox=True)
         self.positions = deepcopy(state.getPositions(asNumpy=True))
         box_vectors = state.getPeriodicBoxVectors(asNumpy=True)
+
+        # Check the symmetry of the box - currently only tolerate cuboidal boxes
+        # All off-diagonal box vector components must be zero
+        for i in range(3):
+            for j in range(3):
+                if i == j:
+                    continue
+                if not np.isclose(box_vectors[i, j]._value, 0.0):
+                    raise Exception("grand only accepts cuboidal simulation cells at this time.")
+
         self.simulation_box = np.array([box_vectors[0, 0]._value,
                                         box_vectors[1, 1]._value,
                                         box_vectors[2, 2]._value]) * unit.nanometer
@@ -1157,6 +1172,16 @@ class GCMCSystemSampler(BaseGrandCanonicalMonteCarloSampler):
         state = self.context.getState(getPositions=True, enforcePeriodicBox=True)
         self.positions = deepcopy(state.getPositions(asNumpy=True))
         box_vectors = state.getPeriodicBoxVectors(asNumpy=True)
+
+        # Check the symmetry of the box - currently only tolerate cuboidal boxes
+        # All off-diagonal box vector components must be zero
+        for i in range(3):
+            for j in range(3):
+                if i == j:
+                    continue
+                if not np.isclose(box_vectors[i, j]._value, 0.0):
+                    raise Exception("grand only accepts cuboidal simulation cells at this time.")
+        
         self.simulation_box = np.array([box_vectors[0, 0]._value,
                                         box_vectors[1, 1]._value,
                                         box_vectors[2, 2]._value]) * unit.nanometer
