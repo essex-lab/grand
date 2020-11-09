@@ -206,7 +206,7 @@ class BaseGrandCanonicalMonteCarloSampler(object):
                 for atom in residue.atoms():
                     nonwater_atom_ids.append(atom.index)
 
-        # Copy all water-water and water-nonwater steric interactions into the custom force
+        # Copy all steric interactions into the custom force, and remove them from the original force
         for atom_idx in range(self.nonbonded_force.getNumParticles()):
             # Get atom parameters
             [charge, sigma, epsilon] = self.nonbonded_force.getParticleParameters(atom_idx)
@@ -215,19 +215,22 @@ class BaseGrandCanonicalMonteCarloSampler(object):
                 sigma = 1.0 * unit.angstrom
             # Add particle to the custom force (with lambda=1 for now)
             custom_sterics.addParticle([sigma, epsilon, 1.0])
-            # Disable steric interactions of waters in the original force by setting epsilon=0
-            # We keep the charges for PME purposes
-            if atom_idx in water_atom_ids:
-                self.nonbonded_force.setParticleParameters(atom_idx, charge, sigma, abs(0))
+            # Disable steric interactions in the original force by setting epsilon=0 (keep the charges for PME purposes)
+            self.nonbonded_force.setParticleParameters(atom_idx, charge, sigma, abs(0))
 
         # Copy over all exceptions into the new force as exclusions
+        # Exceptions between non-water atoms will be excluded here, and handled by the NonbondedForce
+        # If exceptions (other than ignored interactions) are found involving water atoms, we have a problem
         for exception_idx in range(self.nonbonded_force.getNumExceptions()):
             [i, j, chargeprod, sigma, epsilon] = self.nonbonded_force.getExceptionParameters(exception_idx)
+            # If epsilon is greater than zero, this is a non-zero exception, which must be checked
+            if epsilon > 0.0 * unit.kilojoule_per_mole:
+                if i in water_atom_ids or j in water_atom_ids:
+                    raise Exception("Non-zero exception interaction found involving water atoms ({} & {}). grand is"
+                                    " not currently able to support this".format(i, j))
             custom_sterics.addExclusion(i, j)
 
-        # Define interaction groups for the custom force and add to the system
-        custom_sterics.addInteractionGroup(water_atom_ids, water_atom_ids)
-        custom_sterics.addInteractionGroup(water_atom_ids, nonwater_atom_ids)
+        # Add the custom force to the system
         self.system.addForce(custom_sterics)
         self.custom_nb_force = custom_sterics
 
