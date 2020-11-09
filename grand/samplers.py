@@ -197,14 +197,10 @@ class BaseGrandCanonicalMonteCarloSampler(object):
 
         # Get a list of all water and non-water atom IDs
         water_atom_ids = []
-        nonwater_atom_ids = []
         for resid, residue in enumerate(self.topology.residues()):
             if resid in self.water_resids:
                 for atom in residue.atoms():
                     water_atom_ids.append(atom.index)
-            else:
-                for atom in residue.atoms():
-                    nonwater_atom_ids.append(atom.index)
 
         # Copy all steric interactions into the custom force, and remove them from the original force
         for atom_idx in range(self.nonbonded_force.getNumParticles()):
@@ -1181,7 +1177,7 @@ class GCMCSystemSampler(BaseGrandCanonicalMonteCarloSampler):
                     continue
                 if not np.isclose(box_vectors[i, j]._value, 0.0):
                     raise Exception("grand only accepts cuboidal simulation cells at this time.")
-        
+
         self.simulation_box = np.array([box_vectors[0, 0]._value,
                                         box_vectors[1, 1]._value,
                                         box_vectors[2, 2]._value]) * unit.nanometer
