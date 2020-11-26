@@ -41,7 +41,7 @@ extensions = ['sphinx.ext.autodoc',
 # Adding these lines to try to fix the fact that docstrings aren't being loaded by readthedocs
 autodoc_default_flags = ['members']
 autosummary_generate = True
-autodoc_mock_imports = ['libnetcdf', 'netcdf4']
+autodoc_mock_imports = ['libnetcdf', 'netcdf']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
