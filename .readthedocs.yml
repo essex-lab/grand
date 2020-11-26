@@ -10,4 +10,7 @@ conda:
 
 python:
   version: 3.6
-  setup_py_install: true
+  install:
+    - method: setuptools
+      path: .
+
