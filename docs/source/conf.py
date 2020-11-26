@@ -42,7 +42,7 @@ extensions = ['sphinx.ext.autodoc',
 # Adding these lines to try to fix the fact that docstrings aren't being loaded by readthedocs
 autodoc_default_flags = ['members']
 autosummary_generate = True
-autodoc_mock_imports = ['libnetcdf', 'netcdf']
+autodoc_mock_imports = ['libnetcdf', 'netcdf', 'netcdf4']
 for mod_name in autodoc_mock_imports:
     sys.modules[mod_name] = mock.Mock()
 
