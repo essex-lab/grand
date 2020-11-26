@@ -2,6 +2,7 @@ name: grand
 channels:
   - omnia
   - anaconda
+  - conda-forge
 dependencies:
   - python=3.6
   - openmm=7.3.1
