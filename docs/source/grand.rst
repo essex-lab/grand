@@ -9,6 +9,7 @@ Module contents
     :undoc-members:
     :show-inheritance:
 
+
 Submodules
 ----------
 
@@ -20,6 +21,7 @@ grand\.potential module
     :undoc-members:
     :show-inheritance:
 
+
 grand\.samplers module
 ----------------------
 
@@ -28,6 +30,7 @@ grand\.samplers module
     :special-members: __init__
     :undoc-members:
     :show-inheritance:
+
 
 grand\.utils module
 -------------------
