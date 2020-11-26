@@ -1,10 +1,11 @@
 grand package
 =============
 
-Module contents
----------------
+Submodules
+----------
 
-.. automodule:: grand
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. toctree::
+
+   grand.potential
+   grand.samplers
+   grand.util
