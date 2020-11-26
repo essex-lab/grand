@@ -11,3 +11,4 @@ dependencies:
   - openmmtools
   - pymbar
   - lxml
+  - libnetcdf=4.7.3
