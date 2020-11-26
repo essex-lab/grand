@@ -8,4 +8,5 @@ Submodules
 
    grand.potential
    grand.samplers
-   grand.util
+   grand.utils
+
