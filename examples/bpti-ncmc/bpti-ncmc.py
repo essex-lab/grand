@@ -44,40 +44,40 @@ ref_atoms = [{'name': 'CA', 'resname': 'TYR', 'resid': '10'},
 integrator = BAOABIntegrator(300*kelvin, 1.0/picosecond, 0.002*picoseconds)
 
 # Define the NCMC Sampler
-gcmc_mover = grand.samplers.NonequilibriumGCMCSphereSampler(system=system,
-                                                            topology=pdb.topology,
-                                                            temperature=300*kelvin,
-                                                            integrator=integrator,
-                                                            # Make this a 10 ps protocol
-                                                            nPertSteps=99, nPropStepsPerPert=50,
-                                                            referenceAtoms=ref_atoms,
-                                                            sphereRadius=4.2*angstroms,
-                                                            log='bpti-gcmc.log',
-                                                            dcd='bpti-raw.dcd',
-                                                            rst='bpti-rst.rst7',
-                                                            overwrite=False)
+gcncmc_mover = grand.samplers.NonequilibriumGCMCSphereSampler(system=system,
+                                                              topology=pdb.topology,
+                                                              temperature=300*kelvin,
+                                                              integrator=integrator,
+                                                              # Make this a 10 ps protocol
+                                                              nPertSteps=99, nPropStepsPerPert=50,
+                                                              referenceAtoms=ref_atoms,
+                                                              sphereRadius=4.2*angstroms,
+                                                              log='bpti-gcmc.log',
+                                                              dcd='bpti-raw.dcd',
+                                                              rst='bpti-rst.rst7',
+                                                              overwrite=False)
 
 platform = Platform.getPlatformByName('CUDA')
 platform.setPropertyDefaultValue('Precision', 'mixed')
 
-simulation = Simulation(pdb.topology, system, gcmc_mover.compound_integrator, platform)
+simulation = Simulation(pdb.topology, system, gcncmc_mover.compound_integrator, platform)
 simulation.context.setPositions(pdb.positions)
 simulation.context.setVelocitiesToTemperature(300*kelvin)
 simulation.context.setPeriodicBoxVectors(*pdb.topology.getPeriodicBoxVectors())
 
 # Switch off ghost waters and those in sphere (to start fresh)
-gcmc_mover.initialise(simulation.context, ghosts)
-gcmc_mover.deleteWatersInGCMCSphere()
+gcncmc_mover.initialise(simulation.context, ghosts)
+gcncmc_mover.deleteWatersInGCMCSphere()
 
 # Equilibrate water distribution - 10k moves over 5 ps
 print("Equilibration...")
 for i in range(50):
     # Carry out 2 moves every 100 fs
-    gcmc_mover.move(simulation.context, 1)
+    gcncmc_mover.move(simulation.context, 1)
     simulation.step(50)
-print("{}/{} equilibration GCMC moves accepted. N = {}".format(gcmc_mover.n_accepted,
-                                                               gcmc_mover.n_moves,
-                                                               gcmc_mover.N))
+print("{}/{} equilibration GCMC moves accepted. N = {}".format(gcncmc_mover.n_accepted,
+                                                               gcncmc_mover.n_moves,
+                                                               gcncmc_mover.N))
 
 # Add StateDataReporter for production
 simulation.reporters.append(StateDataReporter(stdout,
@@ -87,16 +87,16 @@ simulation.reporters.append(StateDataReporter(stdout,
                                               temperature=True,
                                               volume=True))
 # Reset GCMC statistics
-gcmc_mover.reset()
+gcncmc_mover.reset()
 
 # Run simulation - 5k moves over 50 ps
 print("\nProduction")
 for i in range(50):
     # Carry out 5 GCMC moves per 1 ps of MD
     simulation.step(500)
-    gcmc_mover.move(simulation.context, 2)
+    gcncmc_mover.move(simulation.context, 2)
     # Write data out
-    gcmc_mover.report(simulation)
+    gcncmc_mover.report(simulation)
 
 #
 # Need to process the trajectory for visualisation
