@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.org/essex-lab/grand.svg?branch=master)](https://travis-ci.org/essex-lab/grand)
 [![Anaconda-Server Badge](https://anaconda.org/essexlab/grand/badges/version.svg)](https://anaconda.org/essexlab/grand)
 [![Anaconda-Server Badge](https://anaconda.org/essexlab/grand/badges/downloads.svg)](https://anaconda.org/essexlab/grand)
 [![Documentation Status](https://readthedocs.org/projects/grand/badge/?version=latest)](https://grand.readthedocs.io/en/latest/?badge=latest)
