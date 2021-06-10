@@ -8,6 +8,7 @@ These functions are not used during the simulation, but will be relevant in sett
 simulations and processing results
 
 Marley Samways
+Ollie Melling
 """
 
 import os
@@ -87,9 +88,8 @@ def add_ghosts(topology, positions, ff='tip3p', n=10, pdb='gcmc-extra-wats.pdb')
 
     Notes
     -----
-    Could do with a more elegant way to add many waters. Adding them one by one
-    results in them all being added to different chains. This won't affect
-    correctness, but doesn't look nice.
+    Ghosts currently all added to a new chain
+    Residue numbering continues from the existing PDB numbering
 
     Parameters
     ----------
@@ -119,21 +119,26 @@ def add_ghosts(topology, positions, ff='tip3p', n=10, pdb='gcmc-extra-wats.pdb')
     """
     # Create a Modeller instance of the system
     modeller = app.Modeller(topology=topology, positions=positions)
+
+    # Read the chain IDs
+    chain_ids = []
+    for chain in modeller.topology.chains():
+        chain_ids.append(chain.id)
+
     # Read in simulation box size
     box_vectors = topology.getPeriodicBoxVectors()
     box_size = np.array([box_vectors[0][0]._value,
                          box_vectors[1][1]._value,
                          box_vectors[2][2]._value]) * unit.nanometer
 
-    # Load topology of water model 
+    # Load topology of water model
     assert ff.lower() in ['spce', 'tip3p', 'tip4pew'], "Water model must be SPCE, TIP3P or TIP4Pew!"
     water = app.PDBFile(file=get_data_file("{}.pdb".format(ff.lower())))
 
     # Add multiple copies of the same water, then write out a pdb (for visualisation)
     ghosts = []
     for i in range(n):
-        # Need a slightly more elegant way than this as each water is written to a different chain...
-        # Read in template water positions
+        # Read in template water positions
         positions = water.positions
 
         # Need to translate the water to a random point in the simulation box
@@ -142,43 +147,23 @@ def add_ghosts(topology, positions, ff='tip3p', n=10, pdb='gcmc-extra-wats.pdb')
         for i in range(len(positions)):
             new_positions[i] = positions[i] + new_centre - positions[0]
 
-        # Add the water to the model and include the resid in a list
+        # Add the water to the model and include the resid in a list
         modeller.add(addTopology=water.topology, addPositions=new_positions)
         ghosts.append(modeller.topology._numResidues - 1)
 
-    # Get chain IDs of new waters
-    new_chains = []
-    for res_id, residue in enumerate(modeller.topology.residues()):
-        if res_id in ghosts:
-            new_chains.append(chr(ord('a') + residue.chain.index).upper())
+    # Take the ghost chain as the one after the last chain (alphabetically)
+    new_chain = chr(((ord(chain_ids[-1]) - 64) % 26) + 65)
+
+    # Renumber all ghost waters and assign them to the new chain
+    for resid, residue in enumerate(modeller.topology.residues()):
+        if resid in ghosts:
+            residue.id = str(((resid - 1) % 9999) + 1)
+            residue.chain.id = new_chain
 
     # Write the new topology and positions to a PDB file
     if pdb is not None:
         with open(pdb, 'w') as f:
-            app.PDBFile.writeFile(topology=modeller.topology, positions=modeller.positions, file=f)
-
-        # Want to correct the residue IDs of the added waters as this can sometimes cause issues
-        with open(pdb, 'r') as f:
-            lines = f.readlines()
-
-        max_resid = ghosts[0] + 1  # Start the new resids at the first ghost resid (+1)
-        with open(pdb, 'w') as f:
-            for line in lines:
-                # Automatically write out non-atom lines
-                if not any([line.startswith(x) for x in ['ATOM', 'HETATM', 'TER']]):
-                    f.write(line)
-                else:
-                    # Correct the residue ID if this corresponds to an added water
-                    if line[21] in new_chains:
-                        f.write("{}{:4d}{}".format(line[:22],
-                                                   (max_resid % 9999) + 1,
-                                                   line[26:]))
-                    else:
-                        f.write(line)
-
-                    # Need to change the resid if there is a TER line
-                    if line.startswith('TER'):
-                        max_resid += 1
+            app.PDBFile.writeFile(topology=modeller.topology, positions=modeller.positions, file=f, keepIds=True)
 
     return modeller.topology, modeller.positions, ghosts
 
@@ -1003,3 +988,4 @@ def cluster_waters(topology, trajectory, sphere_radius, ref_atoms=None, sphere_c
         f.write("END")
 
     return None
+

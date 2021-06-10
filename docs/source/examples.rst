@@ -8,4 +8,5 @@ These examples assume a basic knowledge of the Python API for OpenMM.
     examples.bpti
     examples.scytalone
     examples.water
+    examples.bpti-ncmc
 

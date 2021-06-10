@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 1.1.0
+-------------
+- Released 10th June 2021
+- Addition of GCNCMC moves, which allow the environment to relax in response to a water insertion/deletion.
+
 Version 1.0.1
 -------------
 - Released 9th November 2020

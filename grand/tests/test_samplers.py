@@ -147,6 +147,52 @@ def setup_StandardGCMCSphereSampler():
     return None
 
 
+def setup_NonequilibriumGCMCSphereSampler():
+    """
+    Set up variables for the GrandCanonicalMonteCarloSampler
+    """
+    # Make variables global so that they can be used
+    global neq_gcmc_sphere_sampler
+    global neq_gcmc_sphere_simulation
+
+    pdb = PDBFile(utils.get_data_file(os.path.join('tests', 'bpti-ghosts.pdb')))
+    ff = ForceField('amber14-all.xml', 'amber14/tip3p.xml')
+    system = ff.createSystem(pdb.topology, nonbondedMethod=PME, nonbondedCutoff=12 * angstroms,
+                              constraints=HBonds)
+
+    ref_atoms = [{'name': 'CA', 'resname': 'TYR', 'resid': '10'},
+                 {'name': 'CA', 'resname': 'ASN', 'resid': '43'}]
+
+    integrator = LangevinIntegrator(300 * kelvin, 1.0 / picosecond, 0.002 * picoseconds)
+
+    neq_gcmc_sphere_sampler = samplers.NonequilibriumGCMCSphereSampler(system=system, topology=pdb.topology,
+                                                                       temperature=300*kelvin, referenceAtoms=ref_atoms,
+                                                                       sphereRadius=4*angstroms,
+                                                                       integrator=integrator,
+                                                                       nPropStepsPerPert=10, nPertSteps=1,
+                                                                       ghostFile=os.path.join(outdir, 'bpti-ghost-wats.txt'),
+                                                                       log=os.path.join(outdir, 'neqgcmcspheresampler.log'))
+
+    # Define a simulation
+    try:
+        platform = Platform.getPlatformByName('CUDA')
+    except:
+        try:
+            platform = Platform.getPlatformByName('OpenCL')
+        except:
+            platform = Platform.getPlatformByName('CPU')
+
+    neq_gcmc_sphere_simulation = Simulation(pdb.topology, system, neq_gcmc_sphere_sampler.compound_integrator, platform)
+    neq_gcmc_sphere_simulation.context.setPositions(pdb.positions)
+    neq_gcmc_sphere_simulation.context.setVelocitiesToTemperature(300*kelvin)
+    neq_gcmc_sphere_simulation.context.setPeriodicBoxVectors(*pdb.topology.getPeriodicBoxVectors())
+
+    # Set up the sampler
+    neq_gcmc_sphere_sampler.initialise(neq_gcmc_sphere_simulation.context, [3054, 3055, 3056, 3057, 3058])
+
+    return None
+
+
 def setup_GCMCSystemSampler():
     """
     Set up variables for the GCMCSystemSampler
@@ -224,6 +270,50 @@ def setup_StandardGCMCSystemSampler():
 
     # Set up the sampler
     std_gcmc_system_sampler.initialise(std_gcmc_system_simulation.context, [2094, 2095, 2096, 2097, 2098])
+
+    return None
+
+
+def setup_NonequilibriumGCMCSystemSampler():
+    """
+    Set up variables for the StandardGCMCSystemSampler
+    """
+    # Make variables global so that they can be used
+    global neq_gcmc_system_sampler
+    global neq_gcmc_system_simulation
+
+    pdb = PDBFile(utils.get_data_file(os.path.join('tests', 'water-ghosts.pdb')))
+    ff = ForceField('tip3p.xml')
+    system = ff.createSystem(pdb.topology, nonbondedMethod=PME, nonbondedCutoff=12 * angstroms,
+                              constraints=HBonds)
+
+    integrator = LangevinIntegrator(300 * kelvin, 1.0 / picosecond, 0.002 * picoseconds)
+
+    neq_gcmc_system_sampler = samplers.NonequilibriumGCMCSystemSampler(system=system, topology=pdb.topology,
+                                                                       temperature=300*kelvin, integrator=integrator,
+                                                                       boxVectors=np.array(pdb.topology.getPeriodicBoxVectors()),
+                                                                       ghostFile=os.path.join(outdir,
+                                                                                              'water-ghost-wats.txt'),
+                                                                       log=os.path.join(outdir,
+                                                                                        'neqgcmcsystemsampler.log'))
+
+    # Define a simulation
+
+    try:
+        platform = Platform.getPlatformByName('CUDA')
+    except:
+        try:
+            platform = Platform.getPlatformByName('OpenCL')
+        except:
+            platform = Platform.getPlatformByName('CPU')
+
+    neq_gcmc_system_simulation = Simulation(pdb.topology, system, neq_gcmc_system_sampler.compound_integrator, platform)
+    neq_gcmc_system_simulation.context.setPositions(pdb.positions)
+    neq_gcmc_system_simulation.context.setVelocitiesToTemperature(300*kelvin)
+    neq_gcmc_system_simulation.context.setPeriodicBoxVectors(*pdb.topology.getPeriodicBoxVectors())
+
+    # Set up the sampler
+    neq_gcmc_system_sampler.initialise(neq_gcmc_system_simulation.context, [2094, 2095, 2096, 2097, 2098])
 
     return None
 
@@ -471,6 +561,106 @@ class TestStandardGCMCSphereSampler(unittest.TestCase):
         return None
 
 
+class TestNonequilibriumGCMCSphereSampler(unittest.TestCase):
+    """
+    Class to store the tests for the NonequilibriumGCMCSphereSampler class
+    """
+    @classmethod
+    def setUpClass(cls):
+        """
+        Get things ready to run these tests
+        """
+        # Make the output directory if needed
+        if not os.path.isdir(os.path.join(os.path.dirname(__file__), 'output')):
+            os.mkdir(os.path.join(os.path.dirname(__file__), 'output'))
+        # Create a new directory if needed
+        if not os.path.isdir(outdir):
+            os.mkdir(outdir)
+        # If not, then clear any files already in the output directory so that they don't influence tests
+        else:
+            for file in os.listdir(outdir):
+                os.remove(os.path.join(outdir, file))
+
+        # Create sampler
+        setup_NonequilibriumGCMCSphereSampler()
+
+        return None
+
+    def test_move(self):
+        """
+        Make sure the NonequilibriumGCMCSphereSampler.move() method works correctly
+        """
+        neq_gcmc_sphere_sampler.reset()
+
+        # Just run one move, as they are a bit more expensive
+        neq_gcmc_sphere_sampler.move(neq_gcmc_sphere_simulation.context, 1)
+
+        # Check some of the variables have been updated as appropriate
+        assert neq_gcmc_sphere_sampler.n_moves == 1
+        assert 0 <= neq_gcmc_sphere_sampler.n_accepted <= 1
+        assert len(neq_gcmc_sphere_sampler.Ns) == 1
+        assert len(neq_gcmc_sphere_sampler.acceptance_probabilities) == 1
+
+        # Check the NCMC-specific variables
+        assert isinstance(neq_gcmc_sphere_sampler.velocities, Quantity)
+        assert neq_gcmc_sphere_sampler.velocities.unit.is_compatible(nanometers/picosecond)
+        assert len(neq_gcmc_sphere_sampler.insert_works) + len(neq_gcmc_sphere_sampler.delete_works) == 1
+        assert 0 <= neq_gcmc_sphere_sampler.n_left_sphere <= 1
+        assert 0 <= neq_gcmc_sphere_sampler.n_explosions <= 1
+
+        return None
+
+    def test_insertionMove(self):
+        """
+        Make sure the NonequilibriumGCMCSphereSampler.insertionMove() method works correctly
+        """
+        # Prep for a move
+        # Read in positions
+        neq_gcmc_sphere_sampler.context = neq_gcmc_sphere_simulation.context
+        state = neq_gcmc_sphere_sampler.context.getState(getPositions=True, enforcePeriodicBox=True, getVelocities=True)
+        neq_gcmc_sphere_sampler.positions = deepcopy(state.getPositions(asNumpy=True))
+        neq_gcmc_sphere_sampler.velocities = deepcopy(state.getVelocities(asNumpy=True))
+
+        # Update GCMC region based on current state
+        neq_gcmc_sphere_sampler.updateGCMCSphere(state)
+
+        # Set to NCMC integrator
+        neq_gcmc_sphere_sampler.compound_integrator.setCurrentIntegrator(1)
+
+        # Just run one move to make sure it doesn't crash
+        neq_gcmc_sphere_sampler.insertionMove()
+
+        # Reset the compound integrator
+        neq_gcmc_sphere_sampler.compound_integrator.setCurrentIntegrator(0)
+
+        return None
+
+    def test_deletionMove(self):
+        """
+        Make sure the NonequilibriumGCMCSphereSampler.deletionMove() method works correctly
+        """
+        # Prep for a move
+        # Read in positions
+        neq_gcmc_sphere_sampler.context = neq_gcmc_sphere_simulation.context
+        state = neq_gcmc_sphere_sampler.context.getState(getPositions=True, enforcePeriodicBox=True, getVelocities=True)
+        neq_gcmc_sphere_sampler.positions = deepcopy(state.getPositions(asNumpy=True))
+        neq_gcmc_sphere_sampler.velocities = deepcopy(state.getVelocities(asNumpy=True))
+
+        # Update GCMC region based on current state
+        neq_gcmc_sphere_sampler.updateGCMCSphere(state)
+
+        # Set to NCMC integrator
+        neq_gcmc_sphere_sampler.compound_integrator.setCurrentIntegrator(1)
+
+        # Just run one move to make sure it doesn't crash
+        neq_gcmc_sphere_sampler.deletionMove()
+
+        # Reset the compound integrator
+        neq_gcmc_sphere_sampler.compound_integrator.setCurrentIntegrator(0)
+
+        return None
+
+
 class TestGCMCSystemSampler(unittest.TestCase):
     """
     Class to store the tests for the GCMCSystemSampler class
@@ -592,5 +782,98 @@ class TestStandardGCMCSystemSampler(unittest.TestCase):
         assert len(std_gcmc_system_sampler.acceptance_probabilities) == n_moves
         assert isinstance(std_gcmc_system_sampler.energy, Quantity)
         assert std_gcmc_system_sampler.energy.unit.is_compatible(kilocalories_per_mole)
+
+        return None
+
+
+class TestNonequilibriumGCMCSystemSampler(unittest.TestCase):
+    """
+    Class to store the tests for the NonequilibriumGCMCSystemSampler class
+    """
+    @classmethod
+    def setUpClass(cls):
+        """
+        Get things ready to run these tests
+        """
+        # Make the output directory if needed
+        if not os.path.isdir(os.path.join(os.path.dirname(__file__), 'output')):
+            os.mkdir(os.path.join(os.path.dirname(__file__), 'output'))
+        # Create a new directory if needed
+        if not os.path.isdir(outdir):
+            os.mkdir(outdir)
+        # If not, then clear any files already in the output directory so that they don't influence tests
+        else:
+            for file in os.listdir(outdir):
+                os.remove(os.path.join(outdir, file))
+
+        # Create sampler
+        setup_NonequilibriumGCMCSystemSampler()
+
+        return None
+
+    def test_move(self):
+        """
+        Make sure the NonequilibriumGCMCSystemSampler.move() method works correctly
+        """
+        neq_gcmc_system_sampler.reset()
+
+        # Just run one move, as they are a bit more expensive
+        neq_gcmc_system_sampler.move(neq_gcmc_system_simulation.context, 1)
+
+        # Check some of the variables have been updated as appropriate
+        assert neq_gcmc_system_sampler.n_moves == 1
+        assert 0 <= neq_gcmc_system_sampler.n_accepted <= 1
+        assert len(neq_gcmc_system_sampler.Ns) == 1
+        assert len(neq_gcmc_system_sampler.acceptance_probabilities) == 1
+
+        # Check the NCMC-specific variables
+        assert isinstance(neq_gcmc_system_sampler.velocities, Quantity)
+        assert neq_gcmc_system_sampler.velocities.unit.is_compatible(nanometers/picosecond)
+        assert len(neq_gcmc_system_sampler.insert_works) + len(neq_gcmc_system_sampler.delete_works) == 1
+        assert 0 <= neq_gcmc_system_sampler.n_explosions <= 1
+
+        return None
+
+    def test_insertionMove(self):
+        """
+        Make sure the NonequilibriumGCMCSystemSampler.insertionMove() method works correctly
+        """
+        # Prep for a move
+        # Read in positions
+        neq_gcmc_system_sampler.context = neq_gcmc_system_simulation.context
+        state = neq_gcmc_system_sampler.context.getState(getPositions=True, enforcePeriodicBox=True, getVelocities=True)
+        neq_gcmc_system_sampler.positions = deepcopy(state.getPositions(asNumpy=True))
+        neq_gcmc_system_sampler.velocities = deepcopy(state.getVelocities(asNumpy=True))
+
+        # Set to NCMC integrator
+        neq_gcmc_system_sampler.compound_integrator.setCurrentIntegrator(1)
+
+        # Just run one move to make sure it doesn't crash
+        neq_gcmc_system_sampler.insertionMove()
+
+        # Reset the compound integrator
+        neq_gcmc_sphere_sampler.compound_integrator.setCurrentIntegrator(0)
+
+        return None
+
+    def test_deletionMove(self):
+        """
+        Make sure the NonequilibriumGCMCSystemSampler.deletionMove() method works correctly
+        """
+        # Prep for a move
+        # Read in positions
+        neq_gcmc_system_sampler.context = neq_gcmc_system_simulation.context
+        state = neq_gcmc_system_sampler.context.getState(getPositions=True, enforcePeriodicBox=True, getVelocities=True)
+        neq_gcmc_system_sampler.positions = deepcopy(state.getPositions(asNumpy=True))
+        neq_gcmc_system_sampler.velocities = deepcopy(state.getVelocities(asNumpy=True))
+
+        # Set to NCMC integrator
+        neq_gcmc_system_sampler.compound_integrator.setCurrentIntegrator(1)
+
+        # Just run one move to make sure it doesn't crash
+        neq_gcmc_system_sampler.deletionMove()
+
+        # Reset the compound integrator
+        neq_gcmc_sphere_sampler.compound_integrator.setCurrentIntegrator(0)
 
         return None

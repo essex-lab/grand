@@ -18,20 +18,8 @@ from openmmtools.integrators import BAOABIntegrator
 
 import grand
 
-# Write CONECT lines to PDB
-grand.utils.write_conect('scytalone-equil.pdb', 'MQ1', 'mq1.prepi', 'sd-conect.pdb')
-
-# Write ligand XML
-grand.utils.create_ligand_xml('mq1.prmtop', 'mq1.prepi', 'MQ1', 'mq1.xml')
-
 # Load in PDB file
-pdb = PDBFile('sd-conect.pdb')
-
-# Add ghost water molecules, which can be inserted
-pdb.topology, pdb.positions, ghosts = grand.utils.add_ghosts(pdb.topology,
-                                                             pdb.positions,
-                                                             n=5,
-                                                             pdb='sd-ghosts.pdb')
+pdb = PDBFile('phenol-min.pdb')
 
 # Create system
 ff = ForceField('amber14-all.xml', 'amber14/tip3p.xml', 'mq1.xml')
@@ -42,8 +30,7 @@ system = ff.createSystem(pdb.topology,
                          constraints=HBonds)
 
 # Define reference atoms around which the GCMC sphere is based
-ref_atoms = [{'name': 'OH', 'resname': 'TYR', 'resid': '23'},
-             {'name': 'OH', 'resname': 'TYR', 'resid': '43'}]
+ref_atoms = [{'name': 'OH', 'resname': 'TYR', 'resid': '23'}]
 
 # Create GCMC Sampler object
 gcmc_mover = grand.samplers.StandardGCMCSphereSampler(system=system,

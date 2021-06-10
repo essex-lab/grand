@@ -6,7 +6,7 @@ OpenMM-based implementation of grand canonical Monte Carlo (GCMC) moves to sampl
 Marley L. Samways
 """
 
-__version__ = "1.0.1"
+__version__ = "1.1.0"
 
 from grand import samplers, utils, potential, tests
 

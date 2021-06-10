@@ -251,3 +251,4 @@ def calc_std_volume(system, topology, positions, box_vectors, temperature, n_sam
     std_volume = sum(volume_list) / len(volume_list)
 
     return std_volume
+
