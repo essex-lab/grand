@@ -62,8 +62,9 @@ Additional references describing the theory of GCMC are provided below.
 ### Contributors
 
 - Marley Samways `<mls2g13@soton.ac.uk>`
-- Hannah Bruce Macdonald `<hannah.brucemacdonald@choderalab.org>`
+- Hannah Bruce Macdonald
 - Ollie Melling `<ojm2g16@soton.ac.uk>`
+- Will Poole `<wp1g16@soton.ac.uk>`
 
 ### Contact
 
