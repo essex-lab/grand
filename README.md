@@ -50,14 +50,15 @@ the `examples/` directory.
 Additional [examples](https://github.com/essex-lab/grand-paper) and 
 [documentation](https://grand.readthedocs.io/en/latest/) are also available.
 
+### Citing _grand_
+
 The _grand_ module is released under the MIT licence. If results from this
-module contribute to a publication, we only ask that you cite the
-following publication.
-
-- M. L. Samways, H. E. Bruce Macdonald, J. W. Essex, _J. Chem. Inf. Model._,
-2020, 60, 4436-4441, DOI: https://doi.org/10.1021/acs.jcim.0c00648
-
-Additional references describing the theory of GCMC are provided below.
+module contribute to a publication, we only ask that you cite Ref. 1, below.
+A publication describing the implementation of grand canonical nonequilibrium 
+candidate Monte Carlo (GCNCMC) is currently being prepared for submission - the
+citation details will be made available when possible.
+Additional references describing the theory upon which the GCMC implemention
+in _grand_ are also provided below (Refs. 2-3).
 
 ### Contributors
 
@@ -73,8 +74,11 @@ one of the contributors, or send an email to `<jessexgroup@gmail.com>`.
 
 ### References
 
-1. G. A. Ross, M. S. Bodnarchuk, J. W. Essex, _J. Am. Chem. Soc._, 2015, 
+1. M. L. Samways, H. E. Bruce Macdonald, J. W. Essex, _J. Chem. Inf. Model._,
+2020, 60, 4436-4441, DOI: https://doi.org/10.1021/acs.jcim.0c00648
+2. G. A. Ross, M. S. Bodnarchuk, J. W. Essex, _J. Am. Chem. Soc._, 2015,
 137, 47, 14930-14943, DOI: https://doi.org/10.1021/jacs.5b07940
-2. G. A. Ross, H. E. Bruce Macdonald, C. Cave-Ayland, A. I. Cabedo
+3. G. A. Ross, H. E. Bruce Macdonald, C. Cave-Ayland, A. I. Cabedo
 Martinez, J. W. Essex, _J. Chem. Theory Comput._, 2017, 13, 12, 6373-6381, DOI:
 https://doi.org/10.1021/acs.jctc.7b00738
+
