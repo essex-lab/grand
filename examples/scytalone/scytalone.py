@@ -18,6 +18,12 @@ from openmmtools.integrators import BAOABIntegrator
 
 import grand
 
+# Write CONECT lines to PDB
+grand.utils.write_conect('scytalone-equil.pdb', 'MQ1', 'mq1.prepi', 'sd-conect.pdb')
+
+# Write ligand XML
+grand.utils.create_ligand_xml('mq1.prmtop', 'mq1.prepi', 'MQ1', 'mq1.xml')
+
 # Load in PDB file
 pdb = PDBFile('phenol-min.pdb')
 
