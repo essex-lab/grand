@@ -25,7 +25,9 @@ grand.utils.write_conect('scytalone-equil.pdb', 'MQ1', 'mq1.prepi', 'sd-conect.p
 grand.utils.create_ligand_xml('mq1.prmtop', 'mq1.prepi', 'MQ1', 'mq1.xml')
 
 # Load in PDB file
-pdb = PDBFile('phenol-min.pdb')
+pdb = PDBFile('sd-conect.pdb')
+
+pdb.topology, pdb.positions, ghosts = grand.utils.add_ghosts(pdb.topology, pdb.positions, n=10, pdb='sd-ghosts.pdb')
 
 # Create system
 ff = ForceField('amber14-all.xml', 'amber14/tip3p.xml', 'mq1.xml')
