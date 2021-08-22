@@ -47,7 +47,7 @@ conda install -c omnia -c anaconda -c conda-forge -c essexlab grand
 Several (very short) examples of how this module is ran alongside OpenMM can be found in
 the `examples/` directory.
 Additional [examples](https://github.com/essex-lab/grand-paper) and 
-[documentation](https://grand.readthedocs.io/en/latest/) are also available.
+[documentation](https://grand.readthedocs.io/en/latest/) are also available, although please note that the examples listed within the `grand-paper` repo are intended to be run using version 1.0.x of _grand_ and may not work with later versions.
 
 ### Citing _grand_
 
