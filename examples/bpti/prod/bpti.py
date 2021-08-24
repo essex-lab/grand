@@ -1,13 +1,13 @@
 """
 Description
 -----------
-Example script of how to run GCMC/MD in OpenMM for a BPTI system, when
-restarting from a previous simulation
+Example script of how to run GCMC/MD in OpenMM for a BPTI system
 
-Note that this simulation is only an example, and is not long enough
+Note that this simulation is only an example, and is not necessarily long enough
 to see equilibrated behaviour
 
 Marley Samways
+Ollie Melling
 """
 
 from simtk.openmm.app import *
@@ -19,14 +19,17 @@ from openmmtools.integrators import BAOABIntegrator
 
 import grand
 
-# Load in PDB file (for topology)
-pdb = PDBFile('bpti-ghosts.pdb')
+# Load in PDB file
+try:
+    pdb = PDBFile('../equil/bpti-uvt2.pdb')
+except:
+    pdb = PDBFile('bpti-equil.pdb')
 
-# Load restart file
-rst7 = AmberInpcrdFile('bpti-rst.rst7')
-
-# Shouldn't need to add ghosts as these can just be read in from before (all frames contained below)
-ghosts = grand.utils.read_ghosts_from_file('gcmc-ghost-wats.txt')
+# Add ghost water molecules, which can be inserted
+pdb.topology, pdb.positions, ghosts = grand.utils.add_ghosts(pdb.topology,
+                                                             pdb.positions,
+                                                             n=15,
+                                                             pdb='bpti-ghosts.pdb')
 
 # Create system
 ff = ForceField('amber14-all.xml', 'amber14/tip3p.xml')
@@ -42,29 +45,31 @@ ref_atoms = [{'name': 'CA', 'resname': 'TYR', 'resid': '10'},
 
 gcmc_mover = grand.samplers.StandardGCMCSphereSampler(system=system,
                                                       topology=pdb.topology,
-                                                      temperature=300*kelvin,
-                                                      ghostFile='gcmc-ghost-wats2.txt',
+                                                      temperature=298*kelvin,
                                                       referenceAtoms=ref_atoms,
                                                       sphereRadius=4.2*angstroms,
-                                                      log='bpti-gcmc2.log',
-                                                      dcd='bpti-raw2.dcd',
-                                                      rst='bpti-rst2.rst7',
+                                                      log='bpti-gcmc.log',
+                                                      dcd='bpti-raw.dcd',
+                                                      rst='bpti-rst.rst7',
                                                       overwrite=False)
 
 # BAOAB Langevin integrator
-integrator = BAOABIntegrator(300*kelvin, 1.0/picosecond, 0.002*picoseconds)
+integrator = BAOABIntegrator(298*kelvin, 1.0/picosecond, 0.002*picoseconds)
 
+# Define platform and set precision
 platform = Platform.getPlatformByName('CUDA')
 platform.setPropertyDefaultValue('Precision', 'mixed')
 
+# Create Simulation object
 simulation = Simulation(pdb.topology, system, integrator, platform)
+
+# Set positions, velocities and box vectors
 simulation.context.setPositions(pdb.positions)
-simulation.context.setPositions(rst7.getPositions())
-simulation.context.setVelocities(rst7.getVelocities())
+simulation.context.setVelocitiesToTemperature(298*kelvin)
 simulation.context.setPeriodicBoxVectors(*pdb.topology.getPeriodicBoxVectors())
 
-# Make sure the variables are all ready to run & switch of the ghosts from the final frame of the previous run
-gcmc_mover.initialise(simulation.context, ghosts[-1])
+# Prepare the GCMC sphere
+gcmc_mover.initialise(simulation.context, ghosts)
 
 # Add StateDataReporter for production
 simulation.reporters.append(StateDataReporter(stdout,
@@ -74,11 +79,11 @@ simulation.reporters.append(StateDataReporter(stdout,
                                               temperature=True,
                                               volume=True))
 
-# Run simulation - jump straight into production, assuming we're restarting from an equilibration run
-print("\nProduction (continued)")
-for i in range(50):
-    # Carry out 100 GCMC moves per 1 ps of MD
-    simulation.step(500)
+# Run simulation
+print("\nProduction")
+for i in range(100):
+    # Carry out 100 GCMC moves per 2 ps of MD
+    simulation.step(1000)
     gcmc_mover.move(simulation.context, 100)
     # Write data out
     gcmc_mover.report(simulation)
@@ -88,20 +93,28 @@ for i in range(50):
 #
 
 # Shift ghost waters outside the simulation cell
-trj = grand.utils.shift_ghost_waters(ghost_file='gcmc-ghost-wats2.txt',
+trj = grand.utils.shift_ghost_waters(ghost_file='gcmc-ghost-wats.txt',
                                      topology='bpti-ghosts.pdb',
-                                     trajectory='bpti-raw2.dcd')
+                                     trajectory='bpti-raw.dcd')
 
 # Centre the trajectory on a particular residue
 trj = grand.utils.recentre_traj(t=trj, resname='TYR', resid=10)
 
 # Align the trajectory to the protein
-grand.utils.align_traj(t=trj, output='bpti-gcmc2.dcd')
+grand.utils.align_traj(t=trj, output='bpti-gcmc.dcd')
 
 # Write out a PDB trajectory of the GCMC sphere
 grand.utils.write_sphere_traj(radius=4.2,
                               ref_atoms=ref_atoms,
                               topology='bpti-ghosts.pdb',
-                              trajectory='bpti-gcmc2.dcd',
-                              output='gcmc_sphere2.pdb',
+                              trajectory='bpti-gcmc.dcd',
+                              output='gcmc_sphere.pdb',
                               initial_frame=True)
+
+# Cluster water sites
+grand.utils.cluster_waters(topology='bpti-ghosts.pdb',
+                           trajectory='bpti-gcmc.dcd',
+                           sphere_radius=4.2,
+                           ref_atoms=ref_atoms,
+                           cutoff=2.4,
+                           output='bpti-clusts.pdb')
