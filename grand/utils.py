@@ -98,9 +98,7 @@ def add_ghosts(topology, positions, ff='tip3p', n=10, pdb='gcmc-extra-wats.pdb')
     positions : simtk.unit.Quantity
         Atomic coordinates of the initial system
     ff : str
-        Water forcefield to use. Currently the only options
-        are 'tip3p', 'spce' or 'tip4pew'. Should be the same
-        as used for the solvent
+        Water forcefield to use. Currently only TIP3P is supported. 
     n : int
         Number of waters to add to the system
     pdb : str
@@ -132,7 +130,7 @@ def add_ghosts(topology, positions, ff='tip3p', n=10, pdb='gcmc-extra-wats.pdb')
                          box_vectors[2][2]._value]) * unit.nanometer
 
     # Load topology of water model
-    assert ff.lower() in ['spce', 'tip3p', 'tip4pew'], "Water model must be SPCE, TIP3P or TIP4Pew!"
+    assert ff.lower() == "tip3p", "Water model must be TIP3P!"
     water = app.PDBFile(file=get_data_file("{}.pdb".format(ff.lower())))
 
     # Add multiple copies of the same water, then write out a pdb (for visualisation)
