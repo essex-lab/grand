@@ -38,7 +38,8 @@ system = ff.createSystem(pdb.topology,
                          constraints=HBonds)
 
 # Define reference atoms around which the GCMC sphere is based
-ref_atoms = [{'name': 'OH', 'resname': 'TYR', 'resid': '23'}]
+ref_atoms = [{'name': 'OH', 'resname': 'TYR', 'resid': '23'},
+             {'name': 'OH', 'resname': 'TYR', 'resid': '43'}]
 
 # Create GCMC Sampler object
 gcmc_mover = grand.samplers.StandardGCMCSphereSampler(system=system,
