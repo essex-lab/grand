@@ -19,6 +19,7 @@ from simtk import unit
 from simtk.openmm import app
 from copy import deepcopy
 from scipy.cluster import hierarchy
+import warnings
 
 
 class PDBRestartReporter(object):
@@ -792,16 +793,32 @@ def write_sphere_traj(radius, ref_atoms=None, topology=None, trajectory=None, t=
         ref_indices = []
         for ref_atom in ref_atoms:
             found = False
-            for residue in t.topology.residues:
-                if residue.name == ref_atom['resname'] and str(residue.resSeq) == ref_atom['resid']:
-                    for atom in residue.atoms:
-                        if atom.name == ref_atom['name']:
-                            ref_indices.append(atom.index)
-                            found = True
+            if 'chain' not in ref_atom.keys():
+                warnings.warn("Chains are not specified for at least one reference atom, will select the first instance"
+                              " of {}{} found".format(ref_atom['resname'].capitalize(), ref_atom['resid']))
+                for residue in t.topology.residues:
+                    if residue.name == ref_atom['resname'] and str(residue.resSeq) == ref_atom['resid']:
+                        for atom in residue.atoms:
+                            if atom.name == ref_atom['name']:
+                                ref_indices.append(atom.index)
+                                found = True
+            else:
+                if type(ref_atom['chain']) == str:
+                    ref_atom['chain'] = ord(ref_atom['chain'])-65
+                for residue in t.topology.residues:
+                    if residue.name == ref_atom['resname'] and \
+                            str(residue.resSeq) == ref_atom['resid'] and \
+                            residue.chain.index == ref_atom['chain']:
+                        for atom in residue.atoms:
+                            if atom.name == ref_atom['name']:
+                                ref_indices.append(atom.index)
+                                found = True
             if not found:
-                raise Exception("Atom {} of residue {}{} not found!".format(ref_atom['name'],
-                                                                            ref_atom['resname'].capitalize(),
-                                                                            ref_atom['resid']))
+                raise Exception("Atom {} of residue {}{} and chain {} not found!".format(ref_atom['name'],
+                                                                                         ref_atom['resname'].capitalize(),
+                                                                                         ref_atom['resid'],
+                                                                                         chr(ref_atom['chain']+65)))
+
 
     # Loop over all frames and write to PDB file
     with open(output, 'w') as f:
@@ -873,22 +890,38 @@ def cluster_waters(topology, trajectory, sphere_radius, ref_atoms=None, sphere_c
     # Load trajectory
     t = mdtraj.load(trajectory, top=topology, discard_overlapping_frames=False)
     n_frames, n_atoms, n_dims = t.xyz.shape
+    pdb = app.pdbfile.PDBFile(topology)
 
     # Get reference atom IDs
     if ref_atoms is not None:
         ref_indices = []
         for ref_atom in ref_atoms:
             found = False
-            for residue in t.topology.residues:
-                if residue.name == ref_atom['resname'] and str(residue.resSeq) == ref_atom['resid']:
-                    for atom in residue.atoms:
-                        if atom.name == ref_atom['name']:
-                            ref_indices.append(atom.index)
-                            found = True
+            if 'chain' not in ref_atom.keys():
+                warnings.warn("Chains are not specified for at least one reference atom, will select the first instance"
+                              " of {}{} found".format(ref_atom['resname'].capitalize(), ref_atom['resid']))
+                for residue in t.topology.residues:
+                    if residue.name == ref_atom['resname'] and str(residue.resSeq) == ref_atom['resid']:
+                        for atom in residue.atoms:
+                            if atom.name == ref_atom['name']:
+                                ref_indices.append(atom.index)
+                                found = True
+            else:
+                if type(ref_atom['chain']) == str:
+                    ref_atom['chain'] = ord(ref_atom['chain'])-65
+                for residue in t.topology.residues:
+                    if residue.name == ref_atom['resname'] and \
+                            str(residue.resSeq) == ref_atom['resid'] and \
+                            residue.chain.index == ref_atom['chain']:
+                        for atom in residue.atoms:
+                            if atom.name == ref_atom['name']:
+                                ref_indices.append(atom.index)
+                                found = True
             if not found:
-                raise Exception("Atom {} of residue {}{} not found!".format(ref_atom['name'],
-                                                                            ref_atom['resname'].capitalize(),
-                                                                            ref_atom['resid']))
+                raise Exception("Atom {} of residue {}{} and chain {} not found!".format(ref_atom['name'],
+                                                                                         ref_atom['resname'].capitalize(),
+                                                                                         ref_atom['resid'],
+                                                                                         chr(ref_atom['chain']+65)))
 
     wat_coords = []  # Store a list of water coordinates
     wat_frames = []  # Store a list of the frame that each water is in
