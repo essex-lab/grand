@@ -103,7 +103,7 @@ class BaseGrandCanonicalMonteCarloSampler(object):
         # Get water residue IDs & assign statuses to each
         self.water_resids = self.getWaterResids("HOH")  # All waters
         # Assign each water a status: 0: ghost water, 1: GCMC water, 2: Water not under GCMC tracking (out of sphere)
-        self.water_status = np.ones(len(self.water_resids))  # Initially assign all to 1
+        self.water_status = {x: 1 for x in self.water_resids} # Initially assign all to 1
 
         # Need to create a customised force to handle softcore steric interactions of water molecules
         # This should prevent any 0/0 energy evaluations
@@ -293,7 +293,7 @@ class BaseGrandCanonicalMonteCarloSampler(object):
 
     def setWaterStatus(self, resid, new_value):
         """
-        Set the status of a perticular water to a particular value
+        Set the status of a particular water to a particular value
 
         Parameters
         ----------
@@ -302,9 +302,7 @@ class BaseGrandCanonicalMonteCarloSampler(object):
         new_value : int
             New value of the water status. 0: ghost, 1: GCMC water, 2: Non-tracked water
         """
-        # Index of this residue
-        wat_idx = np.where(np.array(self.water_resids) == resid)[0]
-        self.water_status[wat_idx] = new_value
+        self.water_status[resid] = new_value
         return None
 
     def getWaterStatusResids(self, value):
@@ -321,7 +319,7 @@ class BaseGrandCanonicalMonteCarloSampler(object):
         resids : numpy.array
             List of residues which match that status
         """
-        resids = [self.water_resids[idx] for idx in np.where(self.water_status == value)[0]]
+        resids = [x[0] for x in self.water_status.items() if x[1] == value]
         return resids
 
     def getWaterStatusValue(self, resid):
@@ -338,8 +336,7 @@ class BaseGrandCanonicalMonteCarloSampler(object):
         value : int
             Value of the water status. 0: ghost, 1: GCMC water, 2: Non-tracked water
         """
-        wat_idx = np.where(np.array(self.water_resids) == resid)[0]
-        value = self.water_status[wat_idx]
+        value = self.water_status[resid]
         return value
 
     def deleteGhostWaters(self, ghostResids=None, ghostFile=None):
@@ -1612,7 +1609,7 @@ class GCMCSystemSampler(BaseGrandCanonicalMonteCarloSampler):
         self.deleteGhostWaters(ghostResids)
 
         # Count N
-        self.N = np.sum(self.water_status)
+        self.N = len(self.getWaterStatusResids(1))
 
         return None
 
