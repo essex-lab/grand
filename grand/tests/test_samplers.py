@@ -441,12 +441,12 @@ class TestGCMCSphereSampler(unittest.TestCase):
         """
         # Now delete the waters in the sphere
         gcmc_sphere_sampler.deleteWatersInGCMCSphere()
-        new_ghosts = [gcmc_sphere_sampler.gcmc_resids[id] for id in np.where(gcmc_sphere_sampler.gcmc_status == 0)[0]]
+        new_ghosts = gcmc_sphere_sampler.getWaterStatusResids(0)
         # Check that the list of ghosts is correct
         assert new_ghosts == [70, 71, 3054, 3055, 3056, 3057, 3058]
         # Check that the variables match there being no waters in the GCMC region
         assert gcmc_sphere_sampler.N == 0
-        assert all(gcmc_sphere_sampler.gcmc_status == 0)
+        assert all([x in [0, 2] for x in gcmc_sphere_sampler.water_status.values()])
 
         return None
 
@@ -455,8 +455,7 @@ class TestGCMCSphereSampler(unittest.TestCase):
         Make sure the GCMCSphereSampler.updateGCMCSphere() method works correctly
         """
         # Get initial gcmc_resids and status
-        gcmc_resids = deepcopy(gcmc_sphere_sampler.gcmc_resids)
-        gcmc_status = deepcopy(gcmc_sphere_sampler.gcmc_status)
+        gcmc_waters = deepcopy(gcmc_sphere_sampler.getWaterStatusResids(1))
         sphere_centre = deepcopy(gcmc_sphere_sampler.sphere_centre)
         N = gcmc_sphere_sampler.N
 
@@ -465,8 +464,7 @@ class TestGCMCSphereSampler(unittest.TestCase):
         gcmc_sphere_sampler.updateGCMCSphere(state)
 
         # Make sure that these values are all still the same
-        assert all(np.isclose(gcmc_resids, gcmc_sphere_sampler.gcmc_resids))
-        assert all(np.isclose(gcmc_status, gcmc_sphere_sampler.gcmc_status))
+        assert all(np.isclose(gcmc_waters, gcmc_sphere_sampler.getWaterStatusResids(1)))
         assert all(np.isclose(sphere_centre._value, gcmc_sphere_sampler.sphere_centre._value))
         assert N == gcmc_sphere_sampler.N
 
@@ -486,10 +484,9 @@ class TestGCMCSphereSampler(unittest.TestCase):
         Make sure the GCMCSphereSampler.insertRandomWater() method works correctly
         """
         # Insert a random water
-        new_positions, gcmc_id, wat_id, atom_ids = gcmc_sphere_sampler.insertRandomWater()
+        new_positions, wat_id, atom_ids = gcmc_sphere_sampler.insertRandomWater()
 
         # Check that the indices returned are integers - may not be type int
-        assert gcmc_id == int(gcmc_id)
         assert wat_id == int(wat_id)
         assert all([i == int(i) for i in atom_ids])
 
@@ -506,12 +503,11 @@ class TestGCMCSphereSampler(unittest.TestCase):
         Make sure the GCMCSphereSampler.deleteRandomWater() method works correctly
         """
         # Insert a random water
-        gcmc_id, wat_id, atom_ids = gcmc_sphere_sampler.deleteRandomWater()
+        delete_water, atom_indices = gcmc_sphere_sampler.deleteRandomWater()
 
         # Check that the indices returned are integers
-        assert gcmc_id == int(gcmc_id)
-        assert wat_id == int(wat_id)
-        assert all([i == int(i) for i in atom_ids])
+        assert delete_water == int(delete_water)
+        assert all([i == int(i) for i in atom_indices])
 
         return None
 
@@ -711,10 +707,9 @@ class TestGCMCSystemSampler(unittest.TestCase):
         Make sure the GCMCSystemSampler.insertRandomWater() method works correctly
         """
         # Insert a random water
-        new_positions, gcmc_id, wat_id, atom_ids = gcmc_system_sampler.insertRandomWater()
+        new_positions, wat_id, atom_ids = gcmc_system_sampler.insertRandomWater()
 
         # Check that the indices returned are integers - may not be type int
-        assert gcmc_id == int(gcmc_id)
         assert wat_id == int(wat_id)
         assert all([i == int(i) for i in atom_ids])
 
@@ -731,11 +726,10 @@ class TestGCMCSystemSampler(unittest.TestCase):
         Make sure the GCMCSystemSampler.deleteRandomWater() method works correctly
         """
         # Insert a random water
-        gcmc_id, wat_id, atom_ids = gcmc_system_sampler.deleteRandomWater()
+        delete_water, atom_ids = gcmc_system_sampler.deleteRandomWater()
 
         # Check that the indices returned are integers
-        assert gcmc_id == int(gcmc_id)
-        assert wat_id == int(wat_id)
+        assert delete_water == int(delete_water)
         assert all([i == int(i) for i in atom_ids])
 
         return None
