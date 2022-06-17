@@ -473,7 +473,7 @@ class BaseGrandCanonicalMonteCarloSampler(object):
         # Write to the log file
         self.logger.error(error_msg)
         # Raise an Exception
-        self.logger.error(error_msg)
+        raise Exception(error_msg)
 
         return None
 
