@@ -56,7 +56,7 @@ module contribute to a publication, we ask that you cite Refs. 1 and 2, below.
 Ref. 1 discusses the initial implemention while ref. 2 discusses the implementation
 and testing of the non-equilibrium moves.
 Additional references describing the theory upon which the GCMC implemention
-in _grand_ are also provided below (Refs. 3-4).
+in _grand_ is based are also provided below (Refs. 3-4).
 
 ### Contributors
 
@@ -74,7 +74,7 @@ one of the contributors, or send an email to `<j.w.essex@soton.ac.uk>`.
 
 1. M. L. Samways, H. E. Bruce Macdonald, J. W. Essex, _J. Chem. Inf. Model._,
 2020, 60, 4436-4441, DOI: https://doi.org/10.1021/acs.jcim.0c00648
-2. O. J. Melling, M. L. Samways, Y. Ge, D. L. Mobley, J. W. Essex, _J. Chem. Theory Comput._, 2023
+2. O. J. Melling, M. L. Samways, Y. Ge, D. L. Mobley, J. W. Essex, _J. Chem. Theory Comput._, 2023,
 DOI: https://doi.org/10.1021/acs.jctc.2c00823
 3. G. A. Ross, M. S. Bodnarchuk, J. W. Essex, _J. Am. Chem. Soc._, 2015,
 137, 47, 14930-14943, DOI: https://doi.org/10.1021/jacs.5b07940
