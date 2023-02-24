@@ -15,7 +15,7 @@ from simtk.openmm import *
 from simtk.unit import *
 from grand import samplers
 from grand import utils
-
+from openmmtools.integrators import NonequilibriumLangevinIntegrator
 
 outdir = os.path.join(os.path.dirname(__file__), 'output', 'samplers')
 
@@ -39,7 +39,7 @@ def setup_BaseGrandCanonicalMonteCarloSampler():
                                                             log=os.path.join(outdir, 'basegcmcsampler.log'))
 
     # Define a simulation
-    integrator = LangevinIntegrator(300 * kelvin, 1.0/picosecond, 0.002*picoseconds)
+    integrator = NonequilibriumLangevinIntegrator(temperature=300*kelvin, collision_rate=1./picosecond, timestep=2.*femtoseconds)
 
     try:
         platform = Platform.getPlatformByName('CUDA')
@@ -82,7 +82,7 @@ def setup_GCMCSphereSampler():
                                           log=os.path.join(outdir, 'gcmcspheresampler.log'))
 
     # Define a simulation
-    integrator = LangevinIntegrator(300 * kelvin, 1.0/picosecond, 0.002*picoseconds)
+    integrator = NonequilibriumLangevinIntegrator(temperature=300*kelvin, collision_rate=1./picosecond, timestep=2.*femtoseconds)
 
     try:
         platform = Platform.getPlatformByName('CUDA')
@@ -126,7 +126,7 @@ def setup_StandardGCMCSphereSampler():
                                                                  log=os.path.join(outdir, 'stdgcmcspheresampler.log'))
 
     # Define a simulation
-    integrator = LangevinIntegrator(300 * kelvin, 1.0/picosecond, 0.002*picoseconds)
+    integrator = NonequilibriumLangevinIntegrator(temperature=300*kelvin, collision_rate=1./picosecond, timestep=2.*femtoseconds)
 
     try:
         platform = Platform.getPlatformByName('CUDA')
@@ -163,13 +163,13 @@ def setup_NonequilibriumGCMCSphereSampler():
     ref_atoms = [{'name': 'CA', 'resname': 'TYR', 'resid': '10'},
                  {'name': 'CA', 'resname': 'ASN', 'resid': '43'}]
 
-    integrator = LangevinIntegrator(300 * kelvin, 1.0 / picosecond, 0.002 * picoseconds)
+    integrator = NonequilibriumLangevinIntegrator(temperature=300*kelvin, collision_rate=1./picosecond, timestep=2.*femtoseconds)
 
     neq_gcmc_sphere_sampler = samplers.NonequilibriumGCMCSphereSampler(system=system, topology=pdb.topology,
                                                                        temperature=300*kelvin, referenceAtoms=ref_atoms,
                                                                        sphereRadius=4*angstroms,
                                                                        integrator=integrator,
-                                                                       nPropStepsPerPert=10, nPertSteps=1,
+                                                                       nPropStepsPerPert=99, nPertSteps=50,
                                                                        ghostFile=os.path.join(outdir, 'bpti-ghost-wats.txt'),
                                                                        log=os.path.join(outdir, 'neqgcmcspheresampler.log'))
 
@@ -212,7 +212,7 @@ def setup_GCMCSystemSampler():
                                                      log=os.path.join(outdir, 'gcmcsystemsampler.log'))
 
     # Define a simulation
-    integrator = LangevinIntegrator(300 * kelvin, 1.0/picosecond, 0.002*picoseconds)
+    integrator = NonequilibriumLangevinIntegrator(temperature=300*kelvin, collision_rate=1./picosecond, timestep=2.*femtoseconds)
 
     try:
         platform = Platform.getPlatformByName('CUDA')
@@ -253,7 +253,7 @@ def setup_StandardGCMCSystemSampler():
                                                                  log=os.path.join(outdir, 'stdgcmcsystemsampler.log'))
 
     # Define a simulation
-    integrator = LangevinIntegrator(300 * kelvin, 1.0/picosecond, 0.002*picoseconds)
+    integrator = NonequilibriumLangevinIntegrator(temperature=300*kelvin, collision_rate=1./picosecond, timestep=2.*femtoseconds)
 
     try:
         platform = Platform.getPlatformByName('CUDA')
@@ -287,7 +287,7 @@ def setup_NonequilibriumGCMCSystemSampler():
     system = ff.createSystem(pdb.topology, nonbondedMethod=PME, nonbondedCutoff=12 * angstroms,
                               constraints=HBonds)
 
-    integrator = LangevinIntegrator(300 * kelvin, 1.0 / picosecond, 0.002 * picoseconds)
+    integrator = NonequilibriumLangevinIntegrator(temperature=300*kelvin, collision_rate=1./picosecond, timestep=2.*femtoseconds)
 
     neq_gcmc_system_sampler = samplers.NonequilibriumGCMCSystemSampler(system=system, topology=pdb.topology,
                                                                        temperature=300*kelvin, integrator=integrator,
@@ -295,7 +295,8 @@ def setup_NonequilibriumGCMCSystemSampler():
                                                                        ghostFile=os.path.join(outdir,
                                                                                               'water-ghost-wats.txt'),
                                                                        log=os.path.join(outdir,
-                                                                                        'neqgcmcsystemsampler.log'))
+                                                                                        'neqgcmcsystemsampler.log'),
+                                                                       nPropStepsPerPert=50, nPertSteps=99)
 
     # Define a simulation
 
