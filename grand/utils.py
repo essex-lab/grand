@@ -387,7 +387,7 @@ def create_ligand_xml(prmtop, prepi, resname='LIG', output='lig.xml'):
 
     with open(output, 'w') as f:
         # First few lines get written out automatically
-        for line in tmp_xml_lines[:4]:
+        for line in tmp_xml_lines[:5]:
             f.write(line)
 
         # First, we worry about the <AtomTypes> section
