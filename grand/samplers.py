@@ -404,6 +404,10 @@ class BaseGrandCanonicalMonteCarloSampler(object):
         # Get lambda values
         lambda_vdw, lambda_ele = get_lambda_values(new_lambda)
 
+        state = self.context.getState(getPositions=True, enforcePeriodicBox=True, getEnergy=True)
+        positions = state.getPositions(asNumpy=True)
+        box_vectors = state.getPeriodicBoxVectors(asNumpy=True)
+
         # Loop over parameters
         for i, atom_idx in enumerate(atoms):
             # Obtain original parameters
@@ -420,7 +424,10 @@ class BaseGrandCanonicalMonteCarloSampler(object):
         # Update context with new parameters
         self.nonbonded_force.updateParametersInContext(self.context)
         self.custom_nb_force.updateParametersInContext(self.context)
-        
+
+        self.context.setPositions(positions)
+        self.context.setPeriodicBoxVectors(*box_vectors)
+
         return None
 
     def report(self, simulation):
